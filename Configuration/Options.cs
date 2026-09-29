@@ -1,0 +1,4 @@
+namespace SmartSolarMicrogrid.Api.Configuration;
+public sealed class MongoDbOptions { public string ConnectionString { get; set; } = "mongodb+srv://root:root@cluster0.vbpwwqa.mongodb.net/SmartMicrogrid?appName=Cluster0"; public string DatabaseName { get; set; } = "SmartMicrogrid"; }
+public sealed class JwtOptions { public string Key { get; set; } = "CHANGE_THIS_DEVELOPMENT_KEY_TO_A_LONG_RANDOM_SECRET_2026"; public string Issuer { get; set; } = "SmartSolarMicrogrid"; public string Audience { get; set; } = "SmartSolarClients"; public int ExpiryMinutes { get; set; } = 480; }
+public static class Roles { public const string Backoffice = "Backoffice"; public const string GridOperator = "GridOperator"; public const string Prosumer = "Prosumer"; public const string All = Backoffice + "," + GridOperator + "," + Prosumer; }

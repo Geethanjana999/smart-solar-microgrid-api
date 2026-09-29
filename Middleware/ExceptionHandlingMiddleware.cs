@@ -1,0 +1,3 @@
+using System.Net;
+namespace SmartSolarMicrogrid.Api.Middleware;
+public sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger) { public async Task Invoke(HttpContext context) { try { await next(context); } catch (InvalidOperationException ex) { await Write(context,HttpStatusCode.BadRequest,ex.Message); } catch (KeyNotFoundException ex) { await Write(context,HttpStatusCode.NotFound,ex.Message); } catch (Exception ex) { logger.LogError(ex,"Unhandled error"); await Write(context,HttpStatusCode.InternalServerError,"An unexpected server error occurred."); } } private static Task Write(HttpContext c,HttpStatusCode s,string d) { c.Response.StatusCode=(int)s; return c.Response.WriteAsJsonAsync(new {status=(int)s,error=d}); } }
