@@ -60,6 +60,7 @@ public sealed class AuthService(MongoContext db, IOptions<JwtOptions> jwt) : IAu
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Key)),
                 SecurityAlgorithms.HmacSha256));
 
-        return new LoginResponse(new JwtSecurityTokenHandler().WriteToken(token), expires, user.Username, user.Email, user.Role, user.ProsumerNic);
+        var userResponse = new UserResponse(user.Username, user.Email, user.Role, user.ProsumerNic);
+        return new LoginResponse(new JwtSecurityTokenHandler().WriteToken(token), expires, userResponse);
     }
 }
