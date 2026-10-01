@@ -74,10 +74,12 @@ public sealed class ProsumersController(IProsumerService service) : ControllerBa
     // POST api/prosumers/{nic}/activate - approve a pending account or reactivate a deactivated one.
     [Authorize(Roles = Roles.Backoffice)]
     [HttpPost("{nic}/activate")]
+    [HttpPatch("{nic}/reactivate")]
     public async Task<ActionResult<Prosumer>> Activate(string nic) => Ok(await service.ActivateAsync(nic));
 
     // POST api/prosumers/{nic}/deactivate - deactivate (blocked while reservations are open).
     [Authorize(Roles = Roles.Backoffice)]
     [HttpPost("{nic}/deactivate")]
+    [HttpPatch("{nic}/deactivate")]
     public async Task<ActionResult<Prosumer>> Deactivate(string nic) => Ok(await service.DeactivateAsync(nic));
 }

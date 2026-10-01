@@ -38,7 +38,8 @@ public sealed class DatabaseSeeder(MongoContext db)
             await db.Users.InsertOneAsync(user);
         }
 
-        await SeedSampleDataAsync();
+        
+        // await SeedSampleDataAsync();
     }
 
     // Inserts sample prosumers, stations, slots and reservations in every status so the clients have data to show.
