@@ -31,7 +31,13 @@ public sealed class UserService(MongoContext db) : IUserService
             throw new InvalidOperationException("Username already exists.");
         }
 
-        var user = new User { Username = request.Username, Role = request.Role };
+        var email = request.Email.Trim().ToLowerInvariant();
+        if (await db.Users.Find(x => x.Email == email).AnyAsync())
+        {
+            throw new InvalidOperationException("Email already in use.");
+        }
+
+        var user = new User { Username = request.Username, Email = email, Role = request.Role };
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
         await db.Users.InsertOneAsync(user);
         return user;

@@ -15,6 +15,7 @@ public sealed class DatabaseSeeder(MongoContext db)
     // Ensures indexes exist, then seeds sample users, prosumer, station and slot if the database is empty.
     public async Task SeedAsync()
     {
+        await BackfillUserEmailsAsync();
         await CreateIndexesAsync();
         await BackfillBatterySlotsAsync();
 
@@ -26,9 +27,9 @@ public sealed class DatabaseSeeder(MongoContext db)
         var hasher = new PasswordHasher<User>();
         var users = new[]
         {
-            new User { Username = "backoffice", Role = Roles.Backoffice },
-            new User { Username = "operator", Role = Roles.GridOperator },
-            new User { Username = "199012345678", Role = Roles.Prosumer, ProsumerNic = "199012345678" }
+            new User { Username = "backoffice", Email = "backoffice@smartsolar.lk", Role = Roles.Backoffice },
+            new User { Username = "operator", Email = "operator@smartsolar.lk", Role = Roles.GridOperator },
+            new User { Username = "199012345678", Email = "prosumer@example.com", Role = Roles.Prosumer, ProsumerNic = "199012345678" }
         };
 
         foreach (var user in users)
@@ -55,7 +56,7 @@ public sealed class DatabaseSeeder(MongoContext db)
         // Extra logins for the second and third prosumers (the first was created with the base users).
         foreach (var p in prosumers.Skip(1))
         {
-            var user = new User { Username = p.Nic, Role = Roles.Prosumer, ProsumerNic = p.Nic, IsActive = p.IsActive };
+            var user = new User { Username = p.Nic, Email = p.Email, Role = Roles.Prosumer, ProsumerNic = p.Nic, IsActive = p.IsActive };
             user.PasswordHash = hasher.HashPassword(user, "Password123!");
             await db.Users.InsertOneAsync(user);
         }
@@ -120,6 +121,22 @@ public sealed class DatabaseSeeder(MongoContext db)
         FinalizedBy = status == ReservationStatus.Completed ? "operator" : null
     };
 
+    // Users created before email login existed get an email (prosumer profile email, else username@smartsolar.lk).
+    private async Task BackfillUserEmailsAsync()
+    {
+        var legacy = await db.Users.Find(Builders<User>.Filter.Or(
+            Builders<User>.Filter.Exists(x => x.Email, false),
+            Builders<User>.Filter.Eq(x => x.Email, ""))).ToListAsync();
+        foreach (var user in legacy)
+        {
+            var prosumer = user.ProsumerNic == null
+                ? null
+                : await db.Prosumers.Find(x => x.Nic == user.ProsumerNic).FirstOrDefaultAsync();
+            user.Email = (prosumer?.Email ?? $"{user.Username}@smartsolar.lk").Trim().ToLowerInvariant();
+            await db.Users.ReplaceOneAsync(x => x.Id == user.Id, user);
+        }
+    }
+
     // Stations created before AvailableBatterySlots existed get all their slots marked available.
     private async Task BackfillBatterySlotsAsync()
     {
@@ -136,6 +153,10 @@ public sealed class DatabaseSeeder(MongoContext db)
     {
         await db.Users.Indexes.CreateOneAsync(new CreateIndexModel<User>(
             Builders<User>.IndexKeys.Ascending(x => x.Username),
+            new CreateIndexOptions { Unique = true }));
+
+        await db.Users.Indexes.CreateOneAsync(new CreateIndexModel<User>(
+            Builders<User>.IndexKeys.Ascending(x => x.Email),
             new CreateIndexOptions { Unique = true }));
 
         await db.Prosumers.Indexes.CreateOneAsync(new CreateIndexModel<Prosumer>(

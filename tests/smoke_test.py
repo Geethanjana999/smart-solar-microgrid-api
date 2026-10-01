@@ -32,7 +32,9 @@ def check(name, got, expected):
     results.append(ok)
     print(("PASS " if ok else "FAIL ") + name + ("" if ok else f"  (got {got!r}, expected {expected!r})"))
 
-def login(u, p="Password123!"): return call("POST", "/api/auth/login", {"username": u, "password": p})
+EMAIL = {"backoffice": "backoffice@smartsolar.lk", "operator": "operator@smartsolar.lk", "199012345678": "prosumer@example.com",
+         "199256789012": "nimal@example.com", "200011112222": "a@b.co", "200033334444": "c@d.co", "op2": "op2@smartsolar.lk"}
+def login(u, p="Password123!"): return call("POST", "/api/auth/login", {"email": EMAIL.get(u, u), "password": p})
 def iso(h): return (dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=h)).strftime("%Y-%m-%dT%H:%M:%SZ")
 def slot_body(sid, start_h, kwh=50): return {"stationId": sid, "startTime": iso(start_h), "endTime": iso(start_h + 2), "availableKwh": kwh, "pricePerKwh": 10}
 
@@ -49,9 +51,9 @@ sid = next(x["id"] for x in stations if x["name"] == "Colombo Solar Hub")
 
 # ---- users (Backoffice) ----
 check("users: list", call("GET", "/api/users", tok=bo)[0], 200)
-s, u = call("POST", "/api/users", {"username": "op2", "password": "secret1", "role": "GridOperator"}, bo); check("users: create operator", s, 201)
-check("users: Prosumer role rejected", call("POST", "/api/users", {"username": "pp", "password": "secret1", "role": "Prosumer"}, bo)[0], 400)
-check("users: duplicate rejected", call("POST", "/api/users", {"username": "op2", "password": "secret1", "role": "GridOperator"}, bo)[0], 400)
+s, u = call("POST", "/api/users", {"username": "op2", "email": "op2@smartsolar.lk", "password": "secret1", "role": "GridOperator"}, bo); check("users: create operator", s, 201)
+check("users: Prosumer role rejected", call("POST", "/api/users", {"username": "pp", "email": "pp@smartsolar.lk", "password": "secret1", "role": "Prosumer"}, bo)[0], 400)
+check("users: duplicate rejected", call("POST", "/api/users", {"username": "op2", "email": "op2@smartsolar.lk", "password": "secret1", "role": "GridOperator"}, bo)[0], 400)
 check("users: update (disable)", call("PUT", f"/api/users/{u['id']}", {"role": "GridOperator", "isActive": False}, bo)[1]["isActive"], False)
 check("users: disabled user cannot login", login("op2", "secret1")[0], 400)
 check("users: operator forbidden", call("GET", "/api/users", tok=op)[0], 403)

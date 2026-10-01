@@ -20,10 +20,11 @@ namespace SmartSolarMicrogrid.Api.Services;
 
 public sealed class AuthService(MongoContext db, IOptions<JwtOptions> jwt) : IAuthService
 {
-    // Verifies username/password against the Users collection and returns a JWT carrying role and NIC claims.
+    // Verifies email/password against the Users collection and returns a JWT carrying role and NIC claims.
     public async Task<LoginResponse> LoginAsync(LoginRequest request)
     {
-        var user = await db.Users.Find(x => x.Username == request.Username).FirstOrDefaultAsync()
+        var email = request.Email.Trim().ToLowerInvariant();
+        var user = await db.Users.Find(x => x.Email == email).FirstOrDefaultAsync()
             ?? throw new InvalidOperationException("Invalid username or password.");
 
         var passwordOk = new PasswordHasher<User>()
@@ -45,6 +46,7 @@ public sealed class AuthService(MongoContext db, IOptions<JwtOptions> jwt) : IAu
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, user.Role),
             new Claim("nic", user.ProsumerNic ?? "")
         };
@@ -58,6 +60,6 @@ public sealed class AuthService(MongoContext db, IOptions<JwtOptions> jwt) : IAu
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Key)),
                 SecurityAlgorithms.HmacSha256));
 
-        return new LoginResponse(new JwtSecurityTokenHandler().WriteToken(token), expires, user.Username, user.Role, user.ProsumerNic);
+        return new LoginResponse(new JwtSecurityTokenHandler().WriteToken(token), expires, user.Username, user.Email, user.Role, user.ProsumerNic);
     }
 }

@@ -11,6 +11,9 @@ public sealed class User : Entity
 {
     public string Username { get; set; } = "";
 
+    // Login identifier; stored trimmed and lower-case, unique across users.
+    public string Email { get; set; } = "";
+
     // Never serialised into API responses.
     [JsonIgnore]
     public string PasswordHash { get; set; } = "";

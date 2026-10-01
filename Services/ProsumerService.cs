@@ -46,6 +46,18 @@ public sealed class ProsumerService(MongoContext db) : IProsumerService
     public async Task<Prosumer> UpdateAsync(string nic, ProsumerUpdateRequest request)
     {
         var prosumer = await GetAsync(nic);
+
+        // The prosumer's login email follows the profile email; it must stay unique.
+        var email = request.Email.Trim().ToLowerInvariant();
+        if (await db.Users.Find(x => x.Email == email && x.ProsumerNic != nic).AnyAsync())
+        {
+            throw new InvalidOperationException("Email already in use.");
+        }
+
+        await db.Users.UpdateManyAsync(
+            x => x.ProsumerNic == nic && x.Role == Roles.Prosumer,
+            Builders<User>.Update.Set(x => x.Email, email).Set(x => x.UpdatedAt, DateTime.UtcNow));
+
         prosumer.FullName = request.FullName;
         prosumer.Email = request.Email;
         prosumer.Phone = request.Phone;
@@ -89,6 +101,12 @@ public sealed class ProsumerService(MongoContext db) : IProsumerService
             throw new InvalidOperationException("NIC already registered.");
         }
 
+        var email = request.Email.Trim().ToLowerInvariant();
+        if (await db.Users.Find(x => x.Email == email).AnyAsync())
+        {
+            throw new InvalidOperationException("Email already in use.");
+        }
+
         var prosumer = new Prosumer
         {
             Nic = request.Nic,
@@ -100,7 +118,7 @@ public sealed class ProsumerService(MongoContext db) : IProsumerService
             PendingActivation = !active
         };
 
-        var user = new User { Username = request.Nic, Role = Roles.Prosumer, ProsumerNic = request.Nic, IsActive = active };
+        var user = new User { Username = request.Nic, Email = email, Role = Roles.Prosumer, ProsumerNic = request.Nic, IsActive = active };
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
 
         await db.Prosumers.InsertOneAsync(prosumer);
