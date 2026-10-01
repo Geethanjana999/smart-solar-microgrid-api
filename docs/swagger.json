@@ -3095,14 +3095,15 @@
             },
             "LoginRequest": {
                 "required": [
-                    "password",
-                    "username"
+                    "email",
+                    "password"
                 ],
                 "type": "object",
                 "properties": {
-                    "username": {
+                    "email": {
                         "minLength": 1,
-                        "type": "string"
+                        "type": "string",
+                        "format": "email"
                     },
                     "password": {
                         "minLength": 1,
@@ -3123,6 +3124,10 @@
                         "format": "date-time"
                     },
                     "username": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
                         "type": "string",
                         "nullable": true
                     },
@@ -3535,6 +3540,10 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "email": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "role": {
                         "type": "string",
                         "nullable": true
@@ -3551,6 +3560,7 @@
             },
             "UserRequest": {
                 "required": [
+                    "email",
                     "password",
                     "role",
                     "username"
@@ -3560,6 +3570,11 @@
                     "username": {
                         "minLength": 3,
                         "type": "string"
+                    },
+                    "email": {
+                        "minLength": 1,
+                        "type": "string",
+                        "format": "email"
                     },
                     "password": {
                         "minLength": 6,
