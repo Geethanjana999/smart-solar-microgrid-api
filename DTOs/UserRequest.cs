@@ -1,0 +1,20 @@
+/*
+ * File        : UserRequest.cs
+ * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
+ * Description : Payload for creating a web/mobile user account.
+ */
+using System.ComponentModel.DataAnnotations;
+
+namespace SmartSolarMicrogrid.Api.DTOs;
+
+public sealed class UserRequest
+{
+    [Required, MinLength(3)]
+    public string Username { get; set; } = "";
+
+    [Required, MinLength(6)]
+    public string Password { get; set; } = "";
+
+    [Required]
+    public string Role { get; set; } = "";
+}
