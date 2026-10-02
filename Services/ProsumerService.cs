@@ -119,7 +119,9 @@ public sealed class ProsumerService(MongoContext db) : IProsumerService
         };
 
         var user = new User { Username = request.Nic, Email = email, Role = Roles.Prosumer, ProsumerNic = request.Nic, IsActive = active };
-        user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
+        var password = string.IsNullOrWhiteSpace(request.Password) ? "Password123!" : request.Password;
+        if (password.Length < 6) throw new InvalidOperationException("Password must be at least 6 characters.");
+        user.PasswordHash = new PasswordHasher<User>().HashPassword(user, password);
 
         await db.Prosumers.InsertOneAsync(prosumer);
         await db.Users.InsertOneAsync(user);

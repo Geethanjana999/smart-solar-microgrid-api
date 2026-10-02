@@ -23,6 +23,5 @@ public sealed class ProsumerRequest
 
     public string Address { get; set; } = "";
 
-    [Required, MinLength(6)]
-    public string Password { get; set; } = "";
+    public string? Password { get; set; }
 }

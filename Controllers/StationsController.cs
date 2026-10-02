@@ -14,6 +14,7 @@ namespace SmartSolarMicrogrid.Api.Controllers;
 
 [ApiController]
 [Route("api/stations")]
+[Route("api/nodes")] // Alias for frontend
 public sealed class StationsController(IStationService service) : ControllerBase
 {
     // GET api/stations - public list of stations (with GPS) for the map screens.
@@ -21,6 +22,17 @@ public sealed class StationsController(IStationService service) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<SolarStationInfo>>> Get([FromQuery] bool activeOnly = true) =>
         Ok(await service.GetAsync(activeOnly));
+
+    // GET api/stations/{id} - specific station (for frontend compatibility).
+    [AllowAnonymous]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<SolarStationInfo>> GetById(string id)
+    {
+        var stations = await service.GetAsync(false);
+        var station = stations.FirstOrDefault(s => s.Id == id);
+        if (station == null) return NotFound();
+        return Ok(station);
+    }
 
     // GET api/stations/nearby?latitude=&longitude=&radiusKm= - stations around the caller, nearest first.
     [AllowAnonymous]
@@ -36,7 +48,7 @@ public sealed class StationsController(IStationService service) : ControllerBase
     public async Task<ActionResult<SolarStationInfo>> Create(StationRequest request)
     {
         var station = await service.CreateAsync(request);
-        return CreatedAtAction(nameof(Get), new { id = station.Id }, station);
+        return CreatedAtAction(nameof(GetById), new { id = station.Id }, station);
     }
 
     // PUT api/stations/{id} - Backoffice updates a station.
@@ -48,6 +60,7 @@ public sealed class StationsController(IStationService service) : ControllerBase
     // PUT api/stations/{id}/battery-slots - operator/Backoffice sets the free battery slots.
     [Authorize(Roles = Roles.BackofficeOrOperator)]
     [HttpPut("{id}/battery-slots")]
+    [HttpPut("{id}/schedule")] // Alias for frontend
     public async Task<ActionResult<SolarStationInfo>> UpdateBatterySlots(string id, BatterySlotsRequest request) =>
         Ok(await service.UpdateBatterySlotsAsync(id, request));
 
@@ -55,6 +68,7 @@ public sealed class StationsController(IStationService service) : ControllerBase
     [Authorize(Roles = Roles.Backoffice)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [HttpDelete("{id}")]
+    [HttpPatch("{id}/deactivate")] // Alias for frontend
     public async Task<IActionResult> Deactivate(string id)
     {
         await service.DeactivateAsync(id);

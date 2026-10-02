@@ -75,11 +75,19 @@ public sealed class ProsumersController(IProsumerService service) : ControllerBa
     [Authorize(Roles = Roles.Backoffice)]
     [HttpPost("{nic}/activate")]
     [HttpPatch("{nic}/reactivate")]
+    [HttpPost("/api/activations/{nic}/approve")] // Alias for frontend
     public async Task<ActionResult<Prosumer>> Activate(string nic) => Ok(await service.ActivateAsync(nic));
 
     // POST api/prosumers/{nic}/deactivate - deactivate (blocked while reservations are open).
     [Authorize(Roles = Roles.Backoffice)]
     [HttpPost("{nic}/deactivate")]
     [HttpPatch("{nic}/deactivate")]
+    [HttpPost("/api/activations/{nic}/reject")] // Alias for frontend
     public async Task<ActionResult<Prosumer>> Deactivate(string nic) => Ok(await service.DeactivateAsync(nic));
+
+    // GET /api/activations/pending - Alias for frontend pending queue
+    [Authorize(Roles = Roles.Backoffice)]
+    [HttpGet("/api/activations/pending")]
+    public async Task<ActionResult<List<Prosumer>>> PendingActivations() =>
+        Ok(await service.ListAsync("pending"));
 }
