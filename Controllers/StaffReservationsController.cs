@@ -14,6 +14,7 @@ namespace SmartSolarMicrogrid.Api.Controllers;
 [ApiController]
 [Authorize(Roles = Roles.BackofficeOrOperator)]
 [Route("api/staff/reservations")]
+[Route("api/bookings")] // Alias for frontend compatibility
 public sealed class StaffReservationsController(IReservationService service) : ControllerBase
 {
     // GET api/staff/reservations?prosumerNic=&state=&scope=... - all reservations with filters.
@@ -35,11 +36,14 @@ public sealed class StaffReservationsController(IReservationService service) : C
 
     // DELETE api/staff/reservations/{id} - cancel a reservation.
     [HttpDelete("{id}")]
+    [HttpPatch("{id}/cancel")] // Alias for frontend compatibility
+    [HttpPost("{id}/cancel")]
     public async Task<ActionResult<ReservationResponse>> Cancel(string id) =>
         Ok(await service.CancelAsync(id, null));
 
     // POST api/staff/reservations/{id}/approve - approve a pending reservation (releases the QR code).
     [HttpPost("{id}/approve")]
+    [HttpPatch("{id}/approve")] // Alias for frontend compatibility
     public async Task<ActionResult<ReservationResponse>> Approve(string id) =>
         Ok(await service.ApproveAsync(id));
 }

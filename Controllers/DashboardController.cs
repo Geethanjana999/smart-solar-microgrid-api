@@ -19,6 +19,8 @@ public sealed class DashboardController(IDashboardService service) : ControllerB
 {
     // GET api/dashboard - own counts for prosumers, system-wide counts for staff.
     [HttpGet]
+    [HttpGet("operator")]
+    [HttpGet("backoffice")]
     public async Task<ActionResult<DashboardResponse>> Get() =>
         Ok(await service.GetAsync(User.IsInRole(Roles.Prosumer) ? User.GetNic() : null));
 }

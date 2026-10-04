@@ -5,4 +5,6 @@
  */
 namespace SmartSolarMicrogrid.Api.DTOs;
 
-public sealed record LoginResponse(string Token, DateTime ExpiresAt, string Username, string Email, string Role, string? ProsumerNic);
+public sealed record UserResponse(string Username, string Email, string Role, string? ProsumerNic);
+
+public sealed record LoginResponse(string Token, DateTime ExpiresAt, UserResponse User);

@@ -23,8 +23,8 @@ public sealed class AuthService(MongoContext db, IOptions<JwtOptions> jwt) : IAu
     // Verifies email/password against the Users collection and returns a JWT carrying role and NIC claims.
     public async Task<LoginResponse> LoginAsync(LoginRequest request)
     {
-        var email = request.Email.Trim().ToLowerInvariant();
-        var user = await db.Users.Find(x => x.Email == email).FirstOrDefaultAsync()
+        var identifier = request.Username.Trim().ToLowerInvariant();
+        var user = await db.Users.Find(x => x.Email == identifier || x.Username == identifier).FirstOrDefaultAsync()
             ?? throw new InvalidOperationException("Invalid username or password.");
 
         var passwordOk = new PasswordHasher<User>()
@@ -60,6 +60,7 @@ public sealed class AuthService(MongoContext db, IOptions<JwtOptions> jwt) : IAu
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Key)),
                 SecurityAlgorithms.HmacSha256));
 
-        return new LoginResponse(new JwtSecurityTokenHandler().WriteToken(token), expires, user.Username, user.Email, user.Role, user.ProsumerNic);
+        var userResponse = new UserResponse(user.Username, user.Email, user.Role, user.ProsumerNic);
+        return new LoginResponse(new JwtSecurityTokenHandler().WriteToken(token), expires, userResponse);
     }
 }
