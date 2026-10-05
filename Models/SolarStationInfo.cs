@@ -24,4 +24,7 @@ public sealed class SolarStationInfo : Entity
     public int AvailableBatterySlots { get; set; }
 
     public bool IsActive { get; set; } = true;
+
+    [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+    public string Status => IsActive ? "Active" : "Inactive";
 }
