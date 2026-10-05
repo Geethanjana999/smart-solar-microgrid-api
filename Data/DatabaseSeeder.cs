@@ -18,6 +18,7 @@ public sealed class DatabaseSeeder(MongoContext db)
         await BackfillUserEmailsAsync();
         await CreateIndexesAsync();
         await BackfillBatterySlotsAsync();
+        await EnsureDemoStationsAndSlotsAsync();
 
         if (await db.Users.Find(_ => true).AnyAsync())
         {
@@ -42,6 +43,65 @@ public sealed class DatabaseSeeder(MongoContext db)
         await EnsureProsumerProfilesAsync();
 
         // await SeedSampleDataAsync();
+    }
+
+    // Backfills the station and slot catalogue used by the development mobile client.
+    private async Task EnsureDemoStationsAndSlotsAsync()
+    {
+        var stations = new[]
+        {
+            new SolarStationInfo
+            {
+                NodeCode = "NODE-001", Name = "Colombo Solar Hub", Location = "Colombo",
+                Latitude = 6.9271, Longitude = 79.8612, CapacityKwh = 500,
+                BatteryStorageSlots = 12, AvailableBatterySlots = 12
+            },
+            new SolarStationInfo
+            {
+                NodeCode = "NODE-002", Name = "Kandy Hill Microgrid", Location = "Kandy",
+                Latitude = 7.2906, Longitude = 80.6337, CapacityKwh = 300,
+                BatteryStorageSlots = 8, AvailableBatterySlots = 8
+            },
+            new SolarStationInfo
+            {
+                NodeCode = "NODE-003", Name = "Galle Coastal Node", Location = "Galle",
+                Latitude = 6.0535, Longitude = 80.2210, CapacityKwh = 250,
+                BatteryStorageSlots = 6, AvailableBatterySlots = 6
+            }
+        };
+
+        foreach (var candidate in stations)
+        {
+            var station = await db.Stations.Find(x => x.NodeCode == candidate.NodeCode).FirstOrDefaultAsync();
+            if (station is null)
+            {
+                await db.Stations.InsertOneAsync(candidate);
+                station = candidate;
+            }
+
+            for (var day = 0; day < 14; day++)
+            {
+                var localDate = DateTime.UtcNow.Date.AddDays(day);
+                var startUtc = DateTime.SpecifyKind(
+                    localDate.AddHours(16) - SmartSolarMicrogrid.Api.Services.SriLankaTime.Offset,
+                    DateTimeKind.Utc);
+                var exists = await db.Slots.Find(x =>
+                    x.StationId == station.Id && x.StartTime == startUtc).AnyAsync();
+                if (exists)
+                {
+                    continue;
+                }
+
+                await db.Slots.InsertOneAsync(new EnergyBookingSlot
+                {
+                    StationId = station.Id,
+                    StartTime = startUtc,
+                    EndTime = startUtc.AddHours(2),
+                    AvailableKwh = 500,
+                    PricePerKwh = 42.50m
+                });
+            }
+        }
     }
 
     // Keeps login accounts usable when an older database contains users but no linked profiles.

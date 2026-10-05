@@ -4,6 +4,7 @@
  * Description : Lists future, active slots that still have energy available.
  */
 using MongoDB.Driver;
+using MongoDB.Bson;
 using SmartSolarMicrogrid.Api.Data;
 using SmartSolarMicrogrid.Api.DTOs;
 using SmartSolarMicrogrid.Api.Models;

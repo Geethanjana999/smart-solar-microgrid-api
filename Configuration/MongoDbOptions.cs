@@ -10,7 +10,7 @@ public sealed class MongoDbOptions
     public const string SectionName = "MongoDbOptions";
 
     // Local default only; real connection strings come from appsettings.json or environment variables.
-    public string ConnectionString { get; set; } = "mongodb://localhost:27017";
+    public string ConnectionString { get; set; } = "mongodb+srv://adminSolar:Password1234@cluster0.puq2f.mongodb.net/?appName=Cluster0";
 
     public string DatabaseName { get; set; } = "SmartMicrogrid";
 }
