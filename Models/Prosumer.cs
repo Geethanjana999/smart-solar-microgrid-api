@@ -23,4 +23,16 @@ public sealed class Prosumer : Entity
     public bool PendingActivation { get; set; }
 
     public bool DeactivationRequested { get; set; }
+
+    [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+    public string Status
+    {
+        get
+        {
+            if (PendingActivation) return "Pending";
+            if (DeactivationRequested) return "Deactivation-Requested";
+            if (IsActive) return "Active";
+            return "Inactive";
+        }
+    }
 }

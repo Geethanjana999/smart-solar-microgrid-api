@@ -5,4 +5,8 @@
  */
 namespace SmartSolarMicrogrid.Api.DTOs;
 
-public sealed record ErrorResponse(int Status, string Error);
+public sealed record ErrorResponse(int Status, string Error)
+{
+    // Alias to match frontend expectations (err.response.data.message)
+    public string Message => Error;
+}

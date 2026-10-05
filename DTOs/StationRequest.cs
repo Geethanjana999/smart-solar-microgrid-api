@@ -12,8 +12,10 @@ public sealed class StationRequest
     [Required]
     public string Name { get; set; } = "";
 
-    [Required]
     public string Location { get; set; } = "";
+
+    [Required]
+    public string NodeCode { get; set; } = "";
 
     [Range(-90, 90)]
     public double Latitude { get; set; }
@@ -25,5 +27,8 @@ public sealed class StationRequest
     public decimal CapacityKwh { get; set; }
 
     [Range(1, int.MaxValue)]
-    public int BatteryStorageSlots { get; set; }
+    public int BatterySlotsCount { get; set; }
+    
+    // For backwards compatibility
+    public int BatteryStorageSlots { get => BatterySlotsCount; set => BatterySlotsCount = value; }
 }

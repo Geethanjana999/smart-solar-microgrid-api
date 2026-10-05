@@ -22,6 +22,14 @@ public sealed class StaffReservationsController(IReservationService service) : C
     public async Task<ActionResult<List<ReservationResponse>>> Get([FromQuery] ReservationQuery query) =>
         Ok(await service.QueryAsync(null, query));
 
+    // GET api/bookings/history - Alias for history scope for the frontend
+    [HttpGet("history")]
+    public async Task<ActionResult<List<ReservationResponse>>> GetHistory([FromQuery] ReservationQuery query)
+    {
+        query.Scope = "history";
+        return Ok(await service.QueryAsync(null, query));
+    }
+
     // POST api/staff/reservations - book on behalf of a prosumer.
     [HttpPost]
     public async Task<ActionResult<ReservationResponse>> Create(StaffReservationRequest request) =>

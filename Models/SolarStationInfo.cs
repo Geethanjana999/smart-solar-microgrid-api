@@ -11,6 +11,8 @@ public sealed class SolarStationInfo : Entity
 
     public string Location { get; set; } = "";
 
+    public string NodeCode { get; set; } = "";
+
     public double Latitude { get; set; }
 
     public double Longitude { get; set; }
@@ -23,5 +25,17 @@ public sealed class SolarStationInfo : Entity
     // Battery slots currently free; maintained by grid operators.
     public int AvailableBatterySlots { get; set; }
 
+    public OperatingSchedule Schedule { get; set; } = new();
+
     public bool IsActive { get; set; } = true;
+
+    [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+    public string Status => IsActive ? "Active" : "Inactive";
+    
+    // Frontend aliases
+    [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+    public int BatterySlotsCount => BatteryStorageSlots;
+
+    [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+    public int AvailableSlotsCount => AvailableBatterySlots;
 }
