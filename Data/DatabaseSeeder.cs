@@ -1,6 +1,5 @@
 /*
  * File        : DatabaseSeeder.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Creates MongoDB indexes and inserts sample data on first start-up.
  */
 using Microsoft.AspNetCore.Identity;

@@ -1,6 +1,5 @@
 /*
  * File        : JwtOptions.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Strongly typed settings used to issue and validate JWT bearer tokens.
  */
 namespace SmartSolarMicrogrid.Api.Configuration;

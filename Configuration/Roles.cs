@@ -1,6 +1,5 @@
 /*
  * File        : Roles.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Role name constants shared by token issuing and [Authorize] attributes.
  */
 namespace SmartSolarMicrogrid.Api.Configuration;

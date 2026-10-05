@@ -1,6 +1,5 @@
 /*
  * File        : User.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Web/mobile login account (collection: Users).
  */
 using System.Text.Json.Serialization;

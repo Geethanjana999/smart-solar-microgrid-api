@@ -1,6 +1,5 @@
 /*
  * File        : ProsumersController.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Prosumer registration, self-service profile endpoints and Backoffice prosumer management.
  */
 using Microsoft.AspNetCore.Authorization;

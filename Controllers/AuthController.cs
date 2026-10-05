@@ -1,6 +1,5 @@
 /*
  * File        : AuthController.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : REST endpoint for logging in.
  */
 using Microsoft.AspNetCore.Authorization;

@@ -1,6 +1,5 @@
 /*
  * File        : ClaimsPrincipalExtensions.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Helper for reading the prosumer NIC claim from the JWT.
  */
 using System.Security.Claims;

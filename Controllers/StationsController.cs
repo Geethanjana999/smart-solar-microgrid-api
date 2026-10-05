@@ -1,6 +1,5 @@
 /*
  * File        : StationsController.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Endpoints for microgrid stations: Backoffice management, operator battery slots, public map queries.
  */
 using Microsoft.AspNetCore.Authorization;

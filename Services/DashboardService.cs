@@ -1,6 +1,5 @@
 /*
  * File        : DashboardService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Computes dashboard counts; kept in the service layer per the fat-service pattern.
  */
 using MongoDB.Driver;

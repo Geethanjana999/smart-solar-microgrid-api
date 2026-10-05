@@ -1,6 +1,5 @@
 /*
  * File        : ErrorResponsesOperationFilter.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Adds the error responses every endpoint can return (400/404 with the JSON error body,
  *               401/403 on endpoints that require a token) so the Swagger contract matches real behaviour.
  */

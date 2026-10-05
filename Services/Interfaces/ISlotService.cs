@@ -1,6 +1,5 @@
 /*
  * File        : ISlotService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Contract for energy booking slot management.
  */
 using SmartSolarMicrogrid.Api.DTOs;

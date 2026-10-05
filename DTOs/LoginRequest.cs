@@ -1,6 +1,5 @@
 /*
  * File        : LoginRequest.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Credentials submitted to POST /api/auth/login.
  */
 using System.ComponentModel.DataAnnotations;

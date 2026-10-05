@@ -1,6 +1,5 @@
 /*
  * File        : ReservationRequest.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Payload for a prosumer creating a reservation.
  */
 using System.ComponentModel.DataAnnotations;

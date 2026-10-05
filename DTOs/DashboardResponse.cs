@@ -1,6 +1,5 @@
 /*
  * File        : DashboardResponse.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Summary counts shown on the web and mobile dashboards.
  */
 namespace SmartSolarMicrogrid.Api.DTOs;

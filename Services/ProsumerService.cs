@@ -1,6 +1,5 @@
 /*
  * File        : ProsumerService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Prosumer rules: registration with Backoffice activation, profile edits, deactivation and reactivation.
  */
 using Microsoft.AspNetCore.Identity;

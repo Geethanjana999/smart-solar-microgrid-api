@@ -1,6 +1,5 @@
 /*
  * File        : UserUpdateRequest.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Payload for changing a user's role or active flag.
  */
 using System.ComponentModel.DataAnnotations;

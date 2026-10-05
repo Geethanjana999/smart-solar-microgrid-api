@@ -1,6 +1,5 @@
 /*
  * File        : Entity.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Base class giving every MongoDB document an id and audit timestamps.
  */
 using MongoDB.Bson;

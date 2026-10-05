@@ -1,6 +1,5 @@
 /*
  * File        : ReservationService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Reservation rules: 7-day booking window, 12-hour notice, approval, QR verification,
  *               finalisation, and the filtered views used by the dashboards.
  */

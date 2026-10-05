@@ -1,6 +1,5 @@
 /*
  * File        : StaffReservationRequest.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Payload for Backoffice/operator staff booking on behalf of a prosumer.
  */
 using System.ComponentModel.DataAnnotations;

@@ -1,6 +1,5 @@
 /*
  * File        : AuthService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Validates credentials and issues signed JWT tokens.
  */
 using System.IdentityModel.Tokens.Jwt;

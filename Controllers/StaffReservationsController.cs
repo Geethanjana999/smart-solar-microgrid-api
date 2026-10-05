@@ -1,6 +1,5 @@
 /*
  * File        : StaffReservationsController.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Backoffice/operator endpoints for managing and approving reservations on the web app.
  */
 using Microsoft.AspNetCore.Authorization;

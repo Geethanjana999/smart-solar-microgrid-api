@@ -1,6 +1,5 @@
 /*
  * File        : EnergyReservation.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Prosumer reservation of a slot, including its QR token (collection: EnergyReservations).
  */
 namespace SmartSolarMicrogrid.Api.Models;

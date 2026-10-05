@@ -1,6 +1,5 @@
 /*
  * File        : ExceptionHandlingMiddleware.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Translates service exceptions into JSON error responses.
  */
 using System.Net;

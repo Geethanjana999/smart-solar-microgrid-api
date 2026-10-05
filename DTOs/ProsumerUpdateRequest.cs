@@ -1,6 +1,5 @@
 /*
  * File        : ProsumerUpdateRequest.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Payload for a prosumer editing their own profile.
  */
 using System.ComponentModel.DataAnnotations;

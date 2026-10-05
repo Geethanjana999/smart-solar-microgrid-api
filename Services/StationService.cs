@@ -1,6 +1,5 @@
 /*
  * File        : StationService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Business rules for microgrid stations: CRUD, battery slots, deactivation block and nearby search.
  */
 using MongoDB.Driver;

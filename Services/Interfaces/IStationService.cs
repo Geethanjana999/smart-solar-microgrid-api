@@ -1,6 +1,5 @@
 /*
  * File        : IStationService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Contract for microgrid station management and map queries.
  */
 using SmartSolarMicrogrid.Api.DTOs;

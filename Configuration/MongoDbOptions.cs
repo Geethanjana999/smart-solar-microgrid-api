@@ -1,6 +1,5 @@
 /*
  * File        : MongoDbOptions.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Strongly typed settings for the MongoDB connection.
  */
 namespace SmartSolarMicrogrid.Api.Configuration;

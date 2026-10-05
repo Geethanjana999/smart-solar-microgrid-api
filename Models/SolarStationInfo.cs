@@ -1,6 +1,5 @@
 /*
  * File        : SolarStationInfo.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Microgrid node / solar hub (collection: SolarStationInfo).
  */
 namespace SmartSolarMicrogrid.Api.Models;

@@ -1,6 +1,5 @@
 /*
  * File        : DashboardController.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Dashboard summary endpoint for all signed-in roles.
  */
 using Microsoft.AspNetCore.Authorization;

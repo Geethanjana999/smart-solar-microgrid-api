@@ -1,6 +1,5 @@
 /*
  * File        : IUserService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Contract for Backoffice user management.
  */
 using SmartSolarMicrogrid.Api.DTOs;

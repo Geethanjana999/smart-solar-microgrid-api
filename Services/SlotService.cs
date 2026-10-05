@@ -1,6 +1,5 @@
 /*
  * File        : SlotService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Business rules for energy booking slots.
  */
 using MongoDB.Driver;

@@ -1,6 +1,5 @@
 /*
  * File        : OperatorController.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Grid operator endpoints for QR verification and finalising energy transfers.
  */
 using Microsoft.AspNetCore.Authorization;

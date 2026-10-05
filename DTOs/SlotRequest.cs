@@ -1,6 +1,5 @@
 /*
  * File        : SlotRequest.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Payload for creating or updating an energy booking slot.
  */
 using System.ComponentModel.DataAnnotations;

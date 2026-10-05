@@ -1,6 +1,5 @@
 /*
  * File        : IProsumerService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Contract for prosumer registration, self-service actions and Backoffice management.
  */
 using SmartSolarMicrogrid.Api.DTOs;

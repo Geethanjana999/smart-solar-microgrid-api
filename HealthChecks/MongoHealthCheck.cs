@@ -1,6 +1,5 @@
 /*
  * File        : MongoHealthCheck.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Health check that pings MongoDB; used by IIS/monitoring at /health.
  */
 using Microsoft.Extensions.Diagnostics.HealthChecks;

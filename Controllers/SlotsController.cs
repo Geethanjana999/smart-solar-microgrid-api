@@ -1,6 +1,5 @@
 /*
  * File        : SlotsController.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Endpoints for energy booking slot management.
  */
 using Microsoft.AspNetCore.Authorization;

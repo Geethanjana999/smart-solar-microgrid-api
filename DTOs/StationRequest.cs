@@ -1,6 +1,5 @@
 /*
  * File        : StationRequest.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Payload for creating or updating a microgrid station.
  */
 using System.ComponentModel.DataAnnotations;

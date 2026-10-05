@@ -1,6 +1,5 @@
 /*
  * File        : MongoContext.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Holds the MongoDB database handle and typed collection accessors.
  */
 using Microsoft.Extensions.Options;

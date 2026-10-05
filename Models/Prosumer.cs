@@ -1,6 +1,5 @@
 /*
  * File        : Prosumer.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Solar prosumer profile keyed by NIC (collection: Prosumer).
  */
 namespace SmartSolarMicrogrid.Api.Models;

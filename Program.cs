@@ -1,6 +1,5 @@
 /*
  * File        : Program.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Application entry point: configures authentication, Swagger, DI and the request pipeline.
  */
 using System.Text;

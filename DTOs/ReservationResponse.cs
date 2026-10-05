@@ -1,6 +1,5 @@
 /*
  * File        : ReservationResponse.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Reservation joined with station and slot details for the clients.
  */
 namespace SmartSolarMicrogrid.Api.DTOs;

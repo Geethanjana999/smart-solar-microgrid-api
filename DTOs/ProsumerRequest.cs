@@ -1,6 +1,5 @@
 /*
  * File        : ProsumerRequest.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Payload for prosumer self-registration (NIC is the primary key).
  */
 using System.ComponentModel.DataAnnotations;

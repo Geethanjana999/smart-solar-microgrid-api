@@ -1,6 +1,5 @@
 /*
  * File        : EnergyBookingSlot.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Bookable energy time slot at a station (collection: EnergyBookingSlots).
  */
 namespace SmartSolarMicrogrid.Api.Models;

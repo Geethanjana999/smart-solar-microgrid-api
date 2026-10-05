@@ -1,6 +1,5 @@
 /*
  * File        : ReservationQuery.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Filter and search options for listing reservations.
  */
 namespace SmartSolarMicrogrid.Api.DTOs;

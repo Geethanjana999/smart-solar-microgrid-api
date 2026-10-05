@@ -1,6 +1,5 @@
 /*
  * File        : IReservationService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Contract for reservation booking, approval, views and operator QR verification.
  */
 using SmartSolarMicrogrid.Api.DTOs;

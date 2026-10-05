@@ -1,6 +1,5 @@
 /*
  * File        : ReservationsController.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Prosumer endpoints for booking, viewing (current/history/search), updating and cancelling reservations.
  */
 using Microsoft.AspNetCore.Authorization;

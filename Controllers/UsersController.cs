@@ -1,6 +1,5 @@
 /*
  * File        : UsersController.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Backoffice-only endpoints for managing user accounts.
  */
 using Microsoft.AspNetCore.Authorization;

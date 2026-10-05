@@ -1,6 +1,5 @@
 /*
  * File        : UserService.cs
- * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Business rules for creating, listing and updating user accounts.
  */
 using Microsoft.AspNetCore.Identity;
