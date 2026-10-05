@@ -31,10 +31,10 @@ public sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Ex
         }
     }
 
-    // Writes the {status, error} JSON body.
+    // Writes the {status, error, message} JSON body.
     private static Task WriteAsync(HttpContext context, HttpStatusCode status, string detail)
     {
         context.Response.StatusCode = (int)status;
-        return context.Response.WriteAsJsonAsync(new { status = (int)status, error = detail });
+        return context.Response.WriteAsJsonAsync(new { status = (int)status, error = detail, message = detail });
     }
 }

@@ -42,6 +42,7 @@ public sealed class StationService(MongoContext db) : IStationService
         {
             Name = request.Name,
             Location = request.Location,
+            NodeCode = request.NodeCode,
             Latitude = request.Latitude,
             Longitude = request.Longitude,
             CapacityKwh = request.CapacityKwh,
@@ -60,11 +61,27 @@ public sealed class StationService(MongoContext db) : IStationService
 
         station.Name = request.Name;
         station.Location = request.Location;
+        station.NodeCode = request.NodeCode;
         station.Latitude = request.Latitude;
         station.Longitude = request.Longitude;
         station.CapacityKwh = request.CapacityKwh;
         station.BatteryStorageSlots = request.BatteryStorageSlots;
         station.AvailableBatterySlots = Math.Clamp(station.AvailableBatterySlots + change, 0, request.BatteryStorageSlots);
+        station.UpdatedAt = DateTime.UtcNow;
+        await db.Stations.ReplaceOneAsync(x => x.Id == id, station);
+        return station;
+    }
+
+    public async Task<SolarStationInfo> UpdateScheduleAsync(string id, NodeScheduleRequest request)
+    {
+        var station = await FindAsync(id);
+        
+        station.Schedule.OperationalStartTime = request.OperationalStartTime;
+        station.Schedule.OperationalEndTime = request.OperationalEndTime;
+        station.Schedule.PeakTradingStartTime = request.PeakTradingStartTime;
+        station.Schedule.PeakTradingEndTime = request.PeakTradingEndTime;
+        station.Schedule.MaintenanceDay = request.MaintenanceDay;
+        
         station.UpdatedAt = DateTime.UtcNow;
         await db.Stations.ReplaceOneAsync(x => x.Id == id, station);
         return station;

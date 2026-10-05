@@ -24,4 +24,7 @@ public sealed class User : Entity
     public string? ProsumerNic { get; set; }
 
     public bool IsActive { get; set; } = true;
+
+    [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+    public string Status => IsActive ? "Active" : "Inactive";
 }
