@@ -23,6 +23,12 @@ public sealed class StationsController(IStationService service) : ControllerBase
     public async Task<ActionResult<List<SolarStationInfo>>> Get([FromQuery] bool activeOnly = true) =>
         Ok(await service.GetAsync(activeOnly));
 
+    // GET api/stations/{id}/slots - frontend alias for station slots.
+    [AllowAnonymous]
+    [HttpGet("{id}/slots")]
+    public async Task<ActionResult<List<EnergyBookingSlot>>> GetSlots(string id, [FromServices] ISlotService slotService) =>
+        Ok(await slotService.GetAsync(id));
+
     // GET api/stations/{id} - specific station (for frontend compatibility).
     [AllowAnonymous]
     [HttpGet("{id}")]
