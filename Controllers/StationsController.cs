@@ -60,9 +60,14 @@ public sealed class StationsController(IStationService service) : ControllerBase
     // PUT api/stations/{id}/battery-slots - operator/Backoffice sets the free battery slots.
     [Authorize(Roles = Roles.BackofficeOrOperator)]
     [HttpPut("{id}/battery-slots")]
-    [HttpPut("{id}/schedule")] // Alias for frontend
     public async Task<ActionResult<SolarStationInfo>> UpdateBatterySlots(string id, BatterySlotsRequest request) =>
         Ok(await service.UpdateBatterySlotsAsync(id, request));
+
+    // PUT api/stations/{id}/schedule - Backoffice sets the operational schedule.
+    [Authorize(Roles = Roles.Backoffice)]
+    [HttpPut("{id}/schedule")]
+    public async Task<ActionResult<SolarStationInfo>> UpdateSchedule(string id, NodeScheduleRequest request) =>
+        Ok(await service.UpdateScheduleAsync(id, request));
 
     // DELETE api/stations/{id} - Backoffice deactivates (blocked while active reservations exist).
     [Authorize(Roles = Roles.Backoffice)]
