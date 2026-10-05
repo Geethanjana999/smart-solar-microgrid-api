@@ -37,25 +37,35 @@ public sealed class ProsumerService(MongoContext db) : IProsumerService
         return db.Prosumers.Find(filter).SortByDescending(x => x.CreatedAt).ToListAsync();
     }
 
-    // Looks up a prosumer by NIC.
-    public async Task<Prosumer> GetAsync(string nic) =>
-        await db.Prosumers.Find(x => x.Nic == nic).FirstOrDefaultAsync()
-            ?? throw new KeyNotFoundException("Prosumer not found.");
+    // Looks up a prosumer by NIC or Id.
+    public async Task<Prosumer> GetAsync(string nicOrId)
+    {
+        var filter = Builders<Prosumer>.Filter.Eq(x => x.Nic, nicOrId);
+        if (MongoDB.Bson.ObjectId.TryParse(nicOrId, out _))
+        {
+            filter = Builders<Prosumer>.Filter.Or(
+                filter,
+                Builders<Prosumer>.Filter.Eq(x => x.Id, nicOrId));
+        }
+
+        return await db.Prosumers.Find(filter).FirstOrDefaultAsync()
+               ?? throw new KeyNotFoundException("Prosumer not found.");
+    }
 
     // Updates the editable profile fields of the prosumer.
-    public async Task<Prosumer> UpdateAsync(string nic, ProsumerUpdateRequest request)
+    public async Task<Prosumer> UpdateAsync(string nicOrId, ProsumerUpdateRequest request)
     {
-        var prosumer = await GetAsync(nic);
+        var prosumer = await GetAsync(nicOrId);
 
         // The prosumer's login email follows the profile email; it must stay unique.
         var email = request.Email.Trim().ToLowerInvariant();
-        if (await db.Users.Find(x => x.Email == email && x.ProsumerNic != nic).AnyAsync())
+        if (await db.Users.Find(x => x.Email == email && x.ProsumerNic != prosumer.Nic).AnyAsync())
         {
             throw new InvalidOperationException("Email already in use.");
         }
 
         await db.Users.UpdateManyAsync(
-            x => x.ProsumerNic == nic && x.Role == Roles.Prosumer,
+            x => x.ProsumerNic == prosumer.Nic && x.Role == Roles.Prosumer,
             Builders<User>.Update.Set(x => x.Email, email).Set(x => x.UpdatedAt, DateTime.UtcNow));
 
         prosumer.FullName = request.FullName;
@@ -63,34 +73,35 @@ public sealed class ProsumerService(MongoContext db) : IProsumerService
         prosumer.Phone = request.Phone;
         prosumer.Address = request.Address;
         prosumer.UpdatedAt = DateTime.UtcNow;
-        await db.Prosumers.ReplaceOneAsync(x => x.Nic == nic, prosumer);
+        await db.Prosumers.ReplaceOneAsync(x => x.Nic == prosumer.Nic, prosumer);
         return prosumer;
     }
 
     // Flags the account so a Backoffice user can review the deactivation request.
-    public async Task RequestDeactivationAsync(string nic)
+    public async Task RequestDeactivationAsync(string nicOrId)
     {
-        var prosumer = await GetAsync(nic);
+        var prosumer = await GetAsync(nicOrId);
         prosumer.DeactivationRequested = true;
         prosumer.UpdatedAt = DateTime.UtcNow;
-        await db.Prosumers.ReplaceOneAsync(x => x.Nic == nic, prosumer);
+        await db.Prosumers.ReplaceOneAsync(x => x.Nic == prosumer.Nic, prosumer);
     }
 
     // Backoffice only: activates a pending or deactivated account and re-enables its login.
-    public async Task<Prosumer> ActivateAsync(string nic) => await SetActiveAsync(nic, true);
+    public async Task<Prosumer> ActivateAsync(string nicOrId) => await SetActiveAsync(nicOrId, true);
 
     // Backoffice only: deactivates the account unless the prosumer still has open reservations.
-    public async Task<Prosumer> DeactivateAsync(string nic)
+    public async Task<Prosumer> DeactivateAsync(string nicOrId)
     {
+        var prosumer = await GetAsync(nicOrId);
         var hasOpenReservations = await db.Reservations
-            .Find(x => x.ProsumerNic == nic && (x.Status == ReservationStatus.Pending || x.Status == ReservationStatus.Confirmed))
+            .Find(x => x.ProsumerNic == prosumer.Nic && (x.Status == ReservationStatus.Pending || x.Status == ReservationStatus.Confirmed))
             .AnyAsync();
         if (hasOpenReservations)
         {
             throw new InvalidOperationException("Prosumer has active reservations.");
         }
 
-        return await SetActiveAsync(nic, false);
+        return await SetActiveAsync(nicOrId, false);
     }
 
     // Inserts the prosumer profile and its login (username = NIC); rejects duplicate NICs.
@@ -129,17 +140,17 @@ public sealed class ProsumerService(MongoContext db) : IProsumerService
     }
 
     // Sets the active flag on the profile and keeps the matching login in step.
-    private async Task<Prosumer> SetActiveAsync(string nic, bool active)
+    private async Task<Prosumer> SetActiveAsync(string nicOrId, bool active)
     {
-        var prosumer = await GetAsync(nic);
+        var prosumer = await GetAsync(nicOrId);
         prosumer.IsActive = active;
         prosumer.PendingActivation = false;
         prosumer.DeactivationRequested = false;
         prosumer.UpdatedAt = DateTime.UtcNow;
-        await db.Prosumers.ReplaceOneAsync(x => x.Nic == nic, prosumer);
+        await db.Prosumers.ReplaceOneAsync(x => x.Nic == prosumer.Nic, prosumer);
 
         await db.Users.UpdateManyAsync(
-            x => x.ProsumerNic == nic && x.Role == Roles.Prosumer,
+            x => x.ProsumerNic == prosumer.Nic && x.Role == Roles.Prosumer,
             Builders<User>.Update.Set(x => x.IsActive, active).Set(x => x.UpdatedAt, DateTime.UtcNow));
         return prosumer;
     }

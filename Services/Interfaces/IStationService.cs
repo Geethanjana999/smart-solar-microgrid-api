@@ -18,6 +18,8 @@ public interface IStationService
 
     Task<SolarStationInfo> UpdateAsync(string id, StationRequest request);
 
+    Task<SolarStationInfo> UpdateScheduleAsync(string id, NodeScheduleRequest request);
+
     Task<SolarStationInfo> UpdateBatterySlotsAsync(string id, BatterySlotsRequest request);
 
     Task DeactivateAsync(string id);
