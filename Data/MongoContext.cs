@@ -24,10 +24,20 @@ public sealed class MongoContext
 
     public IMongoCollection<EnergyReservation> Reservations => Database.GetCollection<EnergyReservation>("EnergyReservations");
 
+    // Legacy Android bookings use the original reservation shape and collection.
+    public IMongoCollection<Reservation> Bookings => Database.GetCollection<Reservation>("Reservations");
+
+    // Compatibility alias for the legacy booking service.
+    public IMongoCollection<EnergyBookingSlot> EnergyBookingSlots => Slots;
+
     // Opens the MongoDB connection from the configured options.
     public MongoContext(IOptions<MongoDbOptions> options)
     {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(options.Value);
+
         // Connect once; MongoClient is thread-safe and registered as a singleton.
-        Database = new MongoClient(options.Value.ConnectionString).GetDatabase(options.Value.DatabaseName);
+        var client = new MongoClient(options.Value.ConnectionString);
+        Database = client.GetDatabase(options.Value.DatabaseName);
     }
 }

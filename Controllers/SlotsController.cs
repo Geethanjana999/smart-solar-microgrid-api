@@ -1,46 +1,24 @@
 /*
  * File        : SlotsController.cs
  * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
- * Description : Endpoints for energy booking slot management.
+ * Description : Slot catalogue for the Android prosumer app (read-only).
  */
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartSolarMicrogrid.Api.Configuration;
-using SmartSolarMicrogrid.Api.DTOs;
-using SmartSolarMicrogrid.Api.Models;
+using SmartSolarMicrogrid.Api.Filters;
 using SmartSolarMicrogrid.Api.Services.Interfaces;
 
 namespace SmartSolarMicrogrid.Api.Controllers;
 
 [ApiController]
+[Authorize(Roles = Roles.Prosumer)]
+[MobileApiException]
 [Route("api/slots")]
 public sealed class SlotsController(ISlotService service) : ControllerBase
 {
-    // GET api/slots - public list of open slots, optionally per station.
-    [AllowAnonymous]
+    // GET api/slots?stationId=NODE-001&date=2026-10-12
     [HttpGet]
-    public async Task<ActionResult<List<EnergyBookingSlot>>> Get([FromQuery] string? stationId) =>
-        Ok(await service.GetAsync(stationId));
-
-    // POST api/slots - Backoffice creates a slot.
-    [Authorize(Roles = Roles.Backoffice)]
-    [HttpPost]
-    public async Task<ActionResult<EnergyBookingSlot>> Create(SlotRequest request) =>
-        Ok(await service.CreateAsync(request));
-
-    // PUT api/slots/{id} - update a slot.
-    [Authorize(Roles = Roles.Backoffice)]
-    [HttpPut("{id}")]
-    public async Task<ActionResult<EnergyBookingSlot>> Update(string id, SlotRequest request) =>
-        Ok(await service.UpdateAsync(id, request));
-
-    // DELETE api/slots/{id} - delete (blocked while active reservations exist).
-    [Authorize(Roles = Roles.Backoffice)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(string id)
-    {
-        await service.DeleteAsync(id);
-        return NoContent();
-    }
+    public async Task<IActionResult> List([FromQuery] string? stationId, [FromQuery] DateTime? date) =>
+        Ok(await service.ListAvailableAsync(stationId, date));
 }

@@ -3,6 +3,8 @@
  * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
  * Description : Solar prosumer profile keyed by NIC (collection: Prosumer).
  */
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace SmartSolarMicrogrid.Api.Models;
 
 public sealed class Prosumer : Entity
@@ -22,17 +24,19 @@ public sealed class Prosumer : Entity
     // True after self-registration until a Backoffice user activates the account.
     public bool PendingActivation { get; set; }
 
+    // True when the prosumer asked Backoffice to deactivate the account.
     public bool DeactivationRequested { get; set; }
 
-    [MongoDB.Bson.Serialization.Attributes.BsonIgnore]
+    // Derived display status; not stored in MongoDB.
+    // Pending > Deactivation-Requested > Active > Inactive (matches ProsumerService.ListAsync filters).
+    [BsonIgnore]
     public string Status
     {
         get
         {
             if (PendingActivation) return "Pending";
             if (DeactivationRequested) return "Deactivation-Requested";
-            if (IsActive) return "Active";
-            return "Inactive";
+            return IsActive ? "Active" : "Inactive";
         }
     }
 }

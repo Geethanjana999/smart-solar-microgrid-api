@@ -14,7 +14,6 @@ namespace SmartSolarMicrogrid.Api.Controllers;
 [ApiController]
 [Authorize(Roles = Roles.BackofficeOrOperator)]
 [Route("api/staff/reservations")]
-[Route("api/bookings")] // Alias for frontend compatibility
 public sealed class StaffReservationsController(IReservationService service) : ControllerBase
 {
     // GET api/staff/reservations?prosumerNic=&state=&scope=... - all reservations with filters.
@@ -22,7 +21,7 @@ public sealed class StaffReservationsController(IReservationService service) : C
     public async Task<ActionResult<List<ReservationResponse>>> Get([FromQuery] ReservationQuery query) =>
         Ok(await service.QueryAsync(null, query));
 
-    // GET api/bookings/history - Alias for history scope for the frontend
+    // GET api/staff/reservations/history
     [HttpGet("history")]
     public async Task<ActionResult<List<ReservationResponse>>> GetHistory([FromQuery] ReservationQuery query)
     {

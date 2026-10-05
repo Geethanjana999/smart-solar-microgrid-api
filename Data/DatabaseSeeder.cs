@@ -21,6 +21,7 @@ public sealed class DatabaseSeeder(MongoContext db)
 
         if (await db.Users.Find(_ => true).AnyAsync())
         {
+            await EnsureProsumerProfilesAsync();
             return;
         }
 
@@ -38,8 +39,34 @@ public sealed class DatabaseSeeder(MongoContext db)
             await db.Users.InsertOneAsync(user);
         }
 
-        
+        await EnsureProsumerProfilesAsync();
+
         // await SeedSampleDataAsync();
+    }
+
+    // Keeps login accounts usable when an older database contains users but no linked profiles.
+    private async Task EnsureProsumerProfilesAsync()
+    {
+        var prosumerUsers = await db.Users.Find(x =>
+            x.Role == Roles.Prosumer && x.ProsumerNic != null && x.ProsumerNic != "").ToListAsync();
+
+        foreach (var user in prosumerUsers)
+        {
+            var nic = user.ProsumerNic!;
+            var exists = await db.Prosumers.Find(x => x.Nic == nic).AnyAsync();
+            if (exists)
+            {
+                continue;
+            }
+
+            await db.Prosumers.InsertOneAsync(new Prosumer
+            {
+                Nic = nic,
+                FullName = user.Username,
+                Email = user.Email,
+                IsActive = user.IsActive
+            });
+        }
     }
 
     // Inserts sample prosumers, stations, slots and reservations in every status so the clients have data to show.
@@ -64,9 +91,9 @@ public sealed class DatabaseSeeder(MongoContext db)
 
         var stations = new[]
         {
-            new SolarStationInfo { Name = "Colombo Solar Hub", Location = "Colombo", Latitude = 6.9271, Longitude = 79.8612, CapacityKwh = 500, BatteryStorageSlots = 12, AvailableBatterySlots = 12 },
-            new SolarStationInfo { Name = "Kandy Hill Microgrid", Location = "Kandy", Latitude = 7.2906, Longitude = 80.6337, CapacityKwh = 300, BatteryStorageSlots = 8, AvailableBatterySlots = 6 },
-            new SolarStationInfo { Name = "Galle Coastal Node", Location = "Galle", Latitude = 6.0535, Longitude = 80.2210, CapacityKwh = 250, BatteryStorageSlots = 6, AvailableBatterySlots = 6 }
+            new SolarStationInfo { NodeCode = "NODE-001", Name = "Colombo Solar Hub", Location = "Colombo", Latitude = 6.9271, Longitude = 79.8612, CapacityKwh = 500, BatteryStorageSlots = 12, AvailableBatterySlots = 12 },
+            new SolarStationInfo { NodeCode = "NODE-002", Name = "Kandy Hill Microgrid", Location = "Kandy", Latitude = 7.2906, Longitude = 80.6337, CapacityKwh = 300, BatteryStorageSlots = 8, AvailableBatterySlots = 6 },
+            new SolarStationInfo { NodeCode = "NODE-003", Name = "Galle Coastal Node", Location = "Galle", Latitude = 6.0535, Longitude = 80.2210, CapacityKwh = 250, BatteryStorageSlots = 6, AvailableBatterySlots = 6 }
         };
         await db.Stations.InsertManyAsync(stations);
 

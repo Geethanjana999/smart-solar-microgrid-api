@@ -7,6 +7,8 @@ namespace SmartSolarMicrogrid.Api.Configuration;
 
 public sealed class MongoDbOptions
 {
+    public const string SectionName = "MongoDbOptions";
+
     // Local default only; real connection strings come from appsettings.json or environment variables.
     public string ConnectionString { get; set; } = "mongodb://localhost:27017";
 

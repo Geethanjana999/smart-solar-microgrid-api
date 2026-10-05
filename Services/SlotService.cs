@@ -1,7 +1,7 @@
 /*
  * File        : SlotService.cs
  * Project     : Smart Solar Microgrid Trading System - Web API (SE4040 EAD Assignment)
- * Description : Business rules for energy booking slots.
+ * Description : Lists future, active slots that still have energy available.
  */
 using MongoDB.Driver;
 using SmartSolarMicrogrid.Api.Data;
@@ -13,70 +13,44 @@ namespace SmartSolarMicrogrid.Api.Services;
 
 public sealed class SlotService(MongoContext db) : ISlotService
 {
-    // Lists active, not-yet-ended slots, optionally limited to one station.
-    public Task<List<EnergyBookingSlot>> GetAsync(string? stationId) =>
-        db.Slots.Find(x => x.IsActive && (stationId == null || x.StationId == stationId) && x.EndTime > DateTime.UtcNow)
-            .ToListAsync();
+    public Task<List<SlotResponse>> GetAsync(string stationId) =>
+        ListAvailableAsync(stationId, null);
 
-    // Creates a slot after checking the time range and that the station is active.
-    public async Task<EnergyBookingSlot> CreateAsync(SlotRequest request)
+    public async Task<List<SlotResponse>> ListAvailableAsync(string? stationId, DateTime? date)
     {
-        if (request.EndTime <= request.StartTime)
+        var f = Builders<EnergyBookingSlot>.Filter;
+        var filter = f.Eq(x => x.IsActive, true)
+                     & f.Gt(x => x.AvailableKwh, 0m)
+                     & f.Gt(x => x.StartTime, DateTime.UtcNow);
+
+        if (!string.IsNullOrWhiteSpace(stationId))
         {
-            throw new InvalidOperationException("End time must be after start time.");
+            var station = stationId.Trim();
+            var stationFilter = Builders<SolarStationInfo>.Filter.Or(
+                Builders<SolarStationInfo>.Filter.Eq(x => x.NodeCode, station),
+                Builders<SolarStationInfo>.Filter.Eq(x => x.NodeCode, station.ToUpperInvariant()));
+            if (ObjectId.TryParse(station, out _))
+            {
+                stationFilter |= Builders<SolarStationInfo>.Filter.Eq(x => x.Id, station);
+            }
+
+            var stationRecord = await db.Stations.Find(stationFilter).FirstOrDefaultAsync();
+            if (stationRecord is null)
+            {
+                return [];
+            }
+
+            filter &= f.Eq(x => x.StationId, stationRecord.Id);
         }
 
-        if (await db.Stations.Find(x => x.Id == request.StationId && x.IsActive).FirstOrDefaultAsync() == null)
+        if (date is not null)
         {
-            throw new InvalidOperationException("Active station not found.");
+            // Sri Lanka day -> UTC range, so a slot at 06:00 PM Colombo lands on the right day.
+            var dayStartUtc = SriLankaTime.ToClientInstant(SriLankaTime.ToStoredDate(date.Value));
+            filter &= f.Gte(x => x.StartTime, dayStartUtc) & f.Lt(x => x.StartTime, dayStartUtc.AddDays(1));
         }
 
-        var slot = new EnergyBookingSlot
-        {
-            StationId = request.StationId,
-            StartTime = request.StartTime.ToUniversalTime(),
-            EndTime = request.EndTime.ToUniversalTime(),
-            AvailableKwh = request.AvailableKwh,
-            PricePerKwh = request.PricePerKwh
-        };
-        await db.Slots.InsertOneAsync(slot);
-        return slot;
-    }
-
-    // Updates a slot's time range, energy and price.
-    public async Task<EnergyBookingSlot> UpdateAsync(string id, SlotRequest request)
-    {
-        var slot = await db.Slots.Find(x => x.Id == id).FirstOrDefaultAsync()
-            ?? throw new KeyNotFoundException("Slot not found.");
-
-        if (request.EndTime <= request.StartTime)
-        {
-            throw new InvalidOperationException("End time must be after start time.");
-        }
-
-        slot.StartTime = request.StartTime.ToUniversalTime();
-        slot.EndTime = request.EndTime.ToUniversalTime();
-        slot.AvailableKwh = request.AvailableKwh;
-        slot.PricePerKwh = request.PricePerKwh;
-        slot.UpdatedAt = DateTime.UtcNow;
-        await db.Slots.ReplaceOneAsync(x => x.Id == id, slot);
-        return slot;
-    }
-
-    // Deletes a slot unless pending/confirmed reservations still use it.
-    public async Task DeleteAsync(string id)
-    {
-        var hasActiveReservations = await db.Reservations
-            .Find(x => x.SlotId == id && (x.Status == ReservationStatus.Pending || x.Status == ReservationStatus.Confirmed))
-            .AnyAsync();
-        if (hasActiveReservations)
-        {
-            throw new InvalidOperationException("Slot has active reservations.");
-        }
-
-        if ((await db.Slots.DeleteOneAsync(x => x.Id == id)).DeletedCount == 0)
-        {
-            throw new KeyNotFoundException("Slot not found.");
-        }
+        var slots = await db.EnergyBookingSlots.Find(filter).SortBy(x => x.StartTime).Limit(200).ToListAsync();
+        return slots.Select(SlotResponse.From).ToList();
     }
 }
