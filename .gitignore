@@ -3,9 +3,9 @@ obj/
 .vs/
 *.user
 *.suo
-.env
-.env.*
 appsettings.json
 appsettings.Development.json
 mongodb-data/
 mongodb.log
+config.bat
+node_modules
